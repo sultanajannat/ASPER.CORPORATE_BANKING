@@ -34,6 +34,7 @@ builder.Services.AddScoped<IUserInfoGrpcService, UserInfoGrpcService>();
 builder.Services.AddScoped<ASPER.CORPORATE_BANKING.Application.Interfaces.IAuthIntegrationService, ASPER.CORPORATE_BANKING.Application.Services.AuthIntegrationService>();
 builder.Services.AddScoped<ASPER.CORPORATE_BANKING.Application.Interfaces.IApprovalWorkflowEngine, ASPER.CORPORATE_BANKING.Application.Services.ApprovalWorkflowEngine>();
 builder.Services.AddScoped<ASPER.CORPORATE_BANKING.Application.Interfaces.IAdminConfigService, ASPER.CORPORATE_BANKING.Application.Services.AdminConfigService>();
+builder.Services.AddScoped<ASPER.CORPORATE_BANKING.Application.Interfaces.IFileIngestionService, ASPER.CORPORATE_BANKING.Application.Services.FileIngestionService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
