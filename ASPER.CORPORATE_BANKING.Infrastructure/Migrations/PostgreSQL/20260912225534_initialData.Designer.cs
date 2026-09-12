@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 {
     [DbContext(typeof(PostgreDbContext))]
-    [Migration("20260912165502_initialData")]
+    [Migration("20260912225534_initialData")]
     partial class initialData
     {
         /// <inheritdoc />
@@ -20,6 +20,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("crbanking")
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -83,7 +84,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("transactionTypeId");
 
-                    b.ToTable("ApprovalMatrixConfig");
+                    b.ToTable("ApprovalMatrixConfig", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.ApprovalMatrixSlab", b =>
@@ -147,7 +148,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("approvalMatrixConfigId");
 
-                    b.ToTable("ApprovalMatrixSlab");
+                    b.ToTable("ApprovalMatrixSlab", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.ApprovalStep", b =>
@@ -193,7 +194,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("approvalMatrixSlabId");
 
-                    b.ToTable("ApprovalStep");
+                    b.ToTable("ApprovalStep", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.ApprovalStepRole", b =>
@@ -239,7 +240,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("approvalStepId");
 
-                    b.ToTable("ApprovalStepRole");
+                    b.ToTable("ApprovalStepRole", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.FileFieldMapping", b =>
@@ -300,7 +301,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("fileTemplateConfigId");
 
-                    b.ToTable("FileFieldMapping");
+                    b.ToTable("FileFieldMapping", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.FileTemplateConfig", b =>
@@ -352,7 +353,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("transactionTypeId");
 
-                    b.ToTable("FileTemplateConfig");
+                    b.ToTable("FileTemplateConfig", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.TransactionApprovalAction", b =>
@@ -419,7 +420,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("transactionRecordId");
 
-                    b.ToTable("TransactionApprovalAction");
+                    b.ToTable("TransactionApprovalAction", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.TransactionBatch", b =>
@@ -500,7 +501,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("transactionTypeId");
 
-                    b.ToTable("TransactionBatch");
+                    b.ToTable("TransactionBatch", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.TransactionRecord", b =>
@@ -616,7 +617,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasIndex("transactionBatchId");
 
-                    b.ToTable("TransactionRecord");
+                    b.ToTable("TransactionRecord", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.TransactionType", b =>
@@ -663,7 +664,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransactionType");
+                    b.ToTable("TransactionType", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Infrastructure.Audit.Outbox.AuditOutboxMessage", b =>
@@ -700,7 +701,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditOutboxMessage");
+                    b.ToTable("AuditOutboxMessage", "crbanking");
                 });
 
             modelBuilder.Entity("ASPER.CORPORATE_BANKING.Domain.Entities.ApprovalMatrixConfig", b =>

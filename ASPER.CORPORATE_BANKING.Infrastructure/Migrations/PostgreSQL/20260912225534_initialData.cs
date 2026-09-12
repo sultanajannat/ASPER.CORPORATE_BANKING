@@ -12,8 +12,12 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "crbanking");
+
             migrationBuilder.CreateTable(
                 name: "AuditOutboxMessage",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -33,6 +37,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
             migrationBuilder.CreateTable(
                 name: "TransactionType",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -54,6 +59,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
 
             migrationBuilder.CreateTable(
                 name: "ApprovalMatrixConfig",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -78,12 +84,14 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_ApprovalMatrixConfig_TransactionType_transactionTypeId",
                         column: x => x.transactionTypeId,
+                        principalSchema: "crbanking",
                         principalTable: "TransactionType",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "FileTemplateConfig",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -105,12 +113,14 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_FileTemplateConfig_TransactionType_transactionTypeId",
                         column: x => x.transactionTypeId,
+                        principalSchema: "crbanking",
                         principalTable: "TransactionType",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "ApprovalMatrixSlab",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -136,12 +146,14 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_ApprovalMatrixSlab_ApprovalMatrixConfig_approvalMatrixConfi~",
                         column: x => x.approvalMatrixConfigId,
+                        principalSchema: "crbanking",
                         principalTable: "ApprovalMatrixConfig",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "TransactionBatch",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -172,17 +184,20 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_TransactionBatch_ApprovalMatrixConfig_approvalMatrixConfigId",
                         column: x => x.approvalMatrixConfigId,
+                        principalSchema: "crbanking",
                         principalTable: "ApprovalMatrixConfig",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TransactionBatch_TransactionType_transactionTypeId",
                         column: x => x.transactionTypeId,
+                        principalSchema: "crbanking",
                         principalTable: "TransactionType",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "FileFieldMapping",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -207,12 +222,14 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_FileFieldMapping_FileTemplateConfig_fileTemplateConfigId",
                         column: x => x.fileTemplateConfigId,
+                        principalSchema: "crbanking",
                         principalTable: "FileTemplateConfig",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "ApprovalStep",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -232,12 +249,14 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_ApprovalStep_ApprovalMatrixSlab_approvalMatrixSlabId",
                         column: x => x.approvalMatrixSlabId,
+                        principalSchema: "crbanking",
                         principalTable: "ApprovalMatrixSlab",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "TransactionRecord",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -278,17 +297,20 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_TransactionRecord_ApprovalMatrixSlab_matrixSlabId",
                         column: x => x.matrixSlabId,
+                        principalSchema: "crbanking",
                         principalTable: "ApprovalMatrixSlab",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TransactionRecord_TransactionBatch_transactionBatchId",
                         column: x => x.transactionBatchId,
+                        principalSchema: "crbanking",
                         principalTable: "TransactionBatch",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "ApprovalStepRole",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -308,12 +330,14 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_ApprovalStepRole_ApprovalStep_approvalStepId",
                         column: x => x.approvalStepId,
+                        principalSchema: "crbanking",
                         principalTable: "ApprovalStep",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "TransactionApprovalAction",
+                schema: "crbanking",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -340,68 +364,81 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
                     table.ForeignKey(
                         name: "FK_TransactionApprovalAction_TransactionRecord_transactionReco~",
                         column: x => x.transactionRecordId,
+                        principalSchema: "crbanking",
                         principalTable: "TransactionRecord",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApprovalMatrixConfig_transactionTypeId",
+                schema: "crbanking",
                 table: "ApprovalMatrixConfig",
                 column: "transactionTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApprovalMatrixSlab_approvalMatrixConfigId",
+                schema: "crbanking",
                 table: "ApprovalMatrixSlab",
                 column: "approvalMatrixConfigId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApprovalStep_approvalMatrixSlabId",
+                schema: "crbanking",
                 table: "ApprovalStep",
                 column: "approvalMatrixSlabId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApprovalStepRole_approvalStepId",
+                schema: "crbanking",
                 table: "ApprovalStepRole",
                 column: "approvalStepId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FileFieldMapping_fileTemplateConfigId",
+                schema: "crbanking",
                 table: "FileFieldMapping",
                 column: "fileTemplateConfigId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FileTemplateConfig_transactionTypeId",
+                schema: "crbanking",
                 table: "FileTemplateConfig",
                 column: "transactionTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionApprovalAction_transactionRecordId",
+                schema: "crbanking",
                 table: "TransactionApprovalAction",
                 column: "transactionRecordId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionBatch_approvalMatrixConfigId",
+                schema: "crbanking",
                 table: "TransactionBatch",
                 column: "approvalMatrixConfigId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionBatch_transactionTypeId",
+                schema: "crbanking",
                 table: "TransactionBatch",
                 column: "transactionTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionRecord_instructionRefNo",
+                schema: "crbanking",
                 table: "TransactionRecord",
                 column: "instructionRefNo",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionRecord_matrixSlabId",
+                schema: "crbanking",
                 table: "TransactionRecord",
                 column: "matrixSlabId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionRecord_transactionBatchId",
+                schema: "crbanking",
                 table: "TransactionRecord",
                 column: "transactionBatchId");
         }
@@ -410,37 +447,48 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Migrations.PostgreSQL
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ApprovalStepRole");
+                name: "ApprovalStepRole",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "AuditOutboxMessage");
+                name: "AuditOutboxMessage",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "FileFieldMapping");
+                name: "FileFieldMapping",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "TransactionApprovalAction");
+                name: "TransactionApprovalAction",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "ApprovalStep");
+                name: "ApprovalStep",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "FileTemplateConfig");
+                name: "FileTemplateConfig",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "TransactionRecord");
+                name: "TransactionRecord",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "ApprovalMatrixSlab");
+                name: "ApprovalMatrixSlab",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "TransactionBatch");
+                name: "TransactionBatch",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "ApprovalMatrixConfig");
+                name: "ApprovalMatrixConfig",
+                schema: "crbanking");
 
             migrationBuilder.DropTable(
-                name: "TransactionType");
+                name: "TransactionType",
+                schema: "crbanking");
         }
     }
 }
