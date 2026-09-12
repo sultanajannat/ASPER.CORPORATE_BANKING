@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <!-- Layer Dependencies -->
-    <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Application\ASPER.CORPORATE_BANKING.Application.csproj" />
     <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Contract\ASPER.CORPORATE_BANKING.Contract.csproj" />
     <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Domain\ASPER.CORPORATE_BANKING.Domain.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

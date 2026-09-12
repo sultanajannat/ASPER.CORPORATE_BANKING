@@ -1,5 +1,4 @@
 using ASPER.CORPORATE_BANKING.Domain.Entities;
-using ASPER.CORPORATE_BANKING.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
