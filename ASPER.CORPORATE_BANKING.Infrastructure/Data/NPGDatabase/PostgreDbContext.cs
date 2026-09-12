@@ -1,30 +1,50 @@
-using Microsoft.EntityFrameworkCore;
-
 using ASPER.CORPORATE_BANKING.Domain.Entities;
+using ASPER.CORPORATE_BANKING.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 
 namespace ASPER.CORPORATE_BANKING.Infrastructure.Data.NPGDatabase
 {
-    public class PostgreDbContext : DbContext
+    public class PostgreDbContext : CORPORATE_BANKINGDbContext
     {
-        public DbSet<TransactionType> TransactionTypes { get; set; }
-        public DbSet<FileTemplateConfig> FileTemplateConfigs { get; set; }
-        public DbSet<FileFieldMapping> FileFieldMappings { get; set; }
-        public DbSet<ApprovalMatrixConfig> ApprovalMatrixConfigs { get; set; }
-        public DbSet<ApprovalMatrixSlab> ApprovalMatrixSlabs { get; set; }
-        public DbSet<ApprovalStep> ApprovalSteps { get; set; }
-        public DbSet<ApprovalStepRole> ApprovalStepRoles { get; set; }
-        public DbSet<TransactionBatch> TransactionBatches { get; set; }
-        public DbSet<TransactionRecord> TransactionRecords { get; set; }
-        public DbSet<TransactionApprovalAction> TransactionApprovalActions { get; set; }
-        public DbSet<ASPER.CORPORATE_BANKING.Infrastructure.Audit.Outbox.AuditOutboxMessage> AuditOutboxMessages { get; set; }
-
-        public PostgreDbContext(DbContextOptions<PostgreDbContext> options) : base(options)
+        public PostgreDbContext(DbContextOptions<PostgreDbContext> options, IHttpContextAccessor httpContextAccessor)
+            : base(options, httpContextAccessor)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Unspecified),
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Unspecified)
+                );
+
+                var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+                    v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Unspecified) : v,
+                    v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Unspecified) : v
+                );
+
+                foreach (var property in entity.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        property.SetValueConverter(dateTimeConverter);
+                        property.SetColumnType("timestamp without time zone");
+                    }
+                    else if (property.ClrType == typeof(DateTime?))
+                    {
+                        property.SetValueConverter(nullableDateTimeConverter);
+                        property.SetColumnType("timestamp without time zone");
+                    }
+                }
+            }
         }
     }
 }

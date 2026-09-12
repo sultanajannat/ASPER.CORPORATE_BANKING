@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Domain\ASPER.CORPORATE_BANKING.Domain.csproj" />
+    <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Infrastructure\ASPER.CORPORATE_BANKING.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
