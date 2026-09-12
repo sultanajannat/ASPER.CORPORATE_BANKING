@@ -48,6 +48,34 @@ namespace ASPER.CORPORATE_BANKING.Controllers
             return Ok(records);
         }
 
+        [HttpGet("transactions/{id}")]
+        public async Task<IActionResult> GetTransactionDetail(int id)
+        {
+            var record = await _context.TransactionRecords
+                .Include(r => r.transactionBatch)
+                .Where(r => r.Id == id)
+                .Select(r => new {
+                    r.Id,
+                    r.instructionRefNo,
+                    r.amount,
+                    r.currency,
+                    r.bankAccountNo,
+                    r.accountHolderName,
+                    r.routingNumber,
+                    r.senderAccountNo,
+                    r.senderAccountName,
+                    r.purposeCode,
+                    r.status,
+                    batchNo = r.transactionBatch != null ? (Guid?)r.transactionBatch.batchNo : null,
+                    uploadedAt = r.transactionBatch != null ? (DateTime?)r.transactionBatch.uploadedAt : null
+                })
+                .FirstOrDefaultAsync();
+
+            if (record == null) return NotFound("Transaction not found.");
+            
+            return Ok(record);
+        }
+
         [HttpPost("transactions/{id}/action")]
         public async Task<IActionResult> ProcessCheck(int id, [FromBody] WorkflowActionRequest request)
         {
@@ -91,3 +119,4 @@ namespace ASPER.CORPORATE_BANKING.Controllers
         }
     }
 }
+

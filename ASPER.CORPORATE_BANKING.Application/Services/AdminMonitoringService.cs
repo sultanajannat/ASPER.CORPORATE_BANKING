@@ -94,6 +94,87 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                    : ResultDto.Success();
         }
 
+        public async Task<ResultDto> GetAllBatchesAsync()
+        {
+            var batches = await _context.TransactionBatches
+                .OrderByDescending(b => b.uploadedAt)
+                .Select(b => new 
+                {
+                    b.Id,
+                    b.batchNo,
+                    b.fileName,
+                    b.uploadedAt,
+                    b.uploadedByUserName,
+                    b.totalRecords,
+                    b.validRecords,
+                    b.invalidRecords,
+                    b.totalAmount,
+                    b.status
+                })
+                .ToListAsync();
+
+            return ResultDto.Success("Fetched all batches.") is ResultDto res
+                   ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = batches }
+                   : ResultDto.Success();
+        }
+
+        public async Task<ResultDto> GetTransactionsAsync(string status, int? typeId, DateTime? dateFrom, DateTime? dateTo, decimal? minAmount, decimal? maxAmount)
+        {
+            var query = _context.TransactionRecords
+                .Include(r => r.matrixSlab)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(status))
+                query = query.Where(r => r.status == status);
+            
+            if (dateFrom.HasValue)
+                query = query.Where(r => r.createdAt >= dateFrom.Value);
+
+            if (dateTo.HasValue)
+                query = query.Where(r => r.createdAt <= dateTo.Value);
+
+            if (minAmount.HasValue)
+                query = query.Where(r => r.amount >= minAmount.Value);
+
+            if (maxAmount.HasValue)
+                query = query.Where(r => r.amount <= maxAmount.Value);
+
+            var records = await query.OrderByDescending(r => r.createdAt).Take(500).ToListAsync();
+
+            var results = new List<TransactionMonitoringResult>();
+            foreach (var record in records)
+            {
+                var result = new TransactionMonitoringResult
+                {
+                    TransactionRecordId = record.Id,
+                    InstructionRefNo = record.instructionRefNo,
+                    Amount = record.amount ?? 0,
+                    Status = record.status,
+                    LastActionAt = record.updatedAt ?? record.createdAt
+                };
+
+                if (result.LastActionAt.HasValue)
+                {
+                    result.AgingInMinutes = (DateTime.UtcNow - result.LastActionAt.Value).TotalMinutes;
+                }
+
+                if (record.status == "PendingCheck" && record.matrixSlab != null)
+                {
+                    result.CurrentlyPendingWithRoles = record.matrixSlab.checkerRoleName ?? "Checker";
+                }
+                else if (record.status == "PendingApproval")
+                {
+                    result.CurrentlyPendingWithRoles = "Approver(s)";
+                }
+
+                results.Add(result);
+            }
+
+            return ResultDto.Success("Fetched transactions.") is ResultDto res 
+                   ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = results } 
+                   : ResultDto.Success();
+        }
+
         public async Task<ResultDto> GetTransactionAuditAsync(int transactionRecordId)
         {
             var audits = await _context.TransactionApprovalActions
@@ -114,5 +195,42 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                    ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = audits }
                    : ResultDto.Success();
         }
+
+        public async Task<ResultDto> GetTransactionDetailAsync(int transactionRecordId)
+        {
+            var record = await _context.TransactionRecords
+                .Include(r => r.transactionBatch)
+                .Where(r => r.Id == transactionRecordId)
+                .Select(r => new {
+                    r.Id,
+                    r.instructionRefNo,
+                    r.amount,
+                    r.currency,
+                    r.bankAccountNo,
+                    r.accountHolderName,
+                    r.routingNumber,
+                    r.senderAccountNo,
+                    r.senderAccountName,
+                    r.purposeCode,
+                    r.status,
+                    r.currentStepOrder,
+                    totalSteps = _context.ApprovalSteps.Count(s => s.approvalMatrixSlabId == r.matrixSlabId),
+                    batchNo = r.transactionBatch != null ? (Guid?)r.transactionBatch.batchNo : null,
+                    uploadedAt = r.transactionBatch != null ? (DateTime?)r.transactionBatch.uploadedAt : null
+                })
+                .FirstOrDefaultAsync();
+
+            if (record == null)
+            {
+                return ResultDto.Failure("Transaction not found.");
+            }
+
+            return ResultDto.Success("Fetched transaction detail.") is ResultDto res 
+                   ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = record } 
+                   : ResultDto.Success();
+        }
     }
 }
+
+
+
