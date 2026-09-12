@@ -8,5 +8,10 @@ namespace ASPER.CORPORATE_BANKING.Application.Interfaces
         Task<ResultDto> CreateTransactionTypeAsync(CreateTransactionTypeRequest request);
         Task<ResultDto> PublishFileTemplateAsync(int transactionTypeId, CreateFileTemplateRequest request);
         Task<ResultDto> PublishApprovalMatrixAsync(int transactionTypeId, PublishApprovalMatrixRequest request, int actionByUserId);
+
+        Task<ResultDto> GetTransactionTypesAsync();
+        Task<ResultDto> GetActiveFileTemplateAsync(int transactionTypeId);
+        Task<ResultDto> GetActiveApprovalMatrixAsync(int transactionTypeId);
+        Task<ResultDto> GetApprovalMatrixHistoryAsync(int transactionTypeId);
     }
 }

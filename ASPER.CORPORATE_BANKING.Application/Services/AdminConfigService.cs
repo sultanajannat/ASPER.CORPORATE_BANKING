@@ -219,5 +219,66 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
             await _context.SaveChangesAsync();
             return ResultDto.Success("Approval Matrix published successfully.");
         }
+
+        public async Task<ResultDto> GetTransactionTypesAsync()
+        {
+            var types = await _context.TransactionTypes.ToListAsync();
+            return ResultDto.Success("Fetched transaction types.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = types } : ResultDto.Success();
+        }
+
+        public async Task<ResultDto> GetActiveFileTemplateAsync(int transactionTypeId)
+        {
+            var template = await _context.FileTemplateConfigs
+                .Where(t => t.transactionTypeId == transactionTypeId && t.isActive == true)
+                .FirstOrDefaultAsync();
+
+            if (template == null) return ResultDto.Failure("No active template found.");
+            
+            var mappings = await _context.FileFieldMappings
+                .Where(m => m.fileTemplateConfigId == template.Id)
+                .OrderBy(m => m.columnOrder)
+                .ToListAsync();
+
+            var data = new { template, mappings };
+            return ResultDto.Success("Fetched active file template.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = data } : ResultDto.Success();
+        }
+
+        public async Task<ResultDto> GetActiveApprovalMatrixAsync(int transactionTypeId)
+        {
+            var matrix = await _context.ApprovalMatrixConfigs
+                .Where(m => m.transactionTypeId == transactionTypeId && m.isActive == true)
+                .FirstOrDefaultAsync();
+
+            if (matrix == null) return ResultDto.Failure("No active matrix found.");
+            
+            var slabs = await _context.ApprovalMatrixSlabs
+                .Where(s => s.approvalMatrixConfigId == matrix.Id)
+                .ToListAsync();
+                
+            var slabIds = slabs.Select(s => s.Id).ToList();
+            var steps = await _context.ApprovalSteps
+                .Where(s => slabIds.Contains(s.approvalMatrixSlabId ?? 0))
+                .OrderBy(s => s.stepOrder)
+                .ToListAsync();
+                
+            var stepIds = steps.Select(s => s.Id).ToList();
+            var stepRoles = await _context.ApprovalStepRoles
+                .Where(sr => stepIds.Contains(sr.approvalStepId ?? 0))
+                .ToListAsync();
+
+            var data = new { matrix, slabs, steps, stepRoles };
+            return ResultDto.Success("Fetched active matrix.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = data } : ResultDto.Success();
+        }
+
+        public async Task<ResultDto> GetApprovalMatrixHistoryAsync(int transactionTypeId)
+        {
+            var history = await _context.ApprovalMatrixConfigs
+                .Where(m => m.transactionTypeId == transactionTypeId)
+                .OrderByDescending(m => m.version)
+                .Select(m => new { m.Id, m.version, m.isActive, m.createdAt, m.createdBy })
+                .ToListAsync();
+
+            return ResultDto.Success("Fetched matrix history.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = history } : ResultDto.Success();
+        }
     }
 }

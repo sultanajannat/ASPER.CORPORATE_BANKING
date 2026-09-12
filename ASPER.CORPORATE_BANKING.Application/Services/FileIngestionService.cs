@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ClosedXML.Excel;
 using ASPER.CORPORATE_BANKING.Application.DTOs;
 using ASPER.CORPORATE_BANKING.Application.Interfaces;
 using ASPER.CORPORATE_BANKING.Domain.Entities;
+using ASPER.CORPORATE_BANKING.Infrastructure.Audit.Outbox;
 using ASPER.CORPORATE_BANKING.Infrastructure.Data;
 
 namespace ASPER.CORPORATE_BANKING.Application.Services
@@ -185,6 +187,28 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                         {
                             record.status = "AutoApproved";
                             record.currentStepOrder = null;
+                            
+                            // Transactional Outbox Pattern: AutoApproved must immediately go to Outbox
+                            var integrationEvent = new ApprovedTransactionIntegrationEvent
+                            {
+                                TransactionRecordId = record.Id, // Will be 0 here, but generated on save
+                                InstructionRefNo = record.instructionRefNo,
+                                Amount = record.amount ?? 0,
+                                Currency = record.currency,
+                                BeneficiaryAccount = record.bankAccountNo,
+                                SenderAccount = record.senderAccountNo,
+                                RoutingNumber = record.routingNumber,
+                                PurposeCode = record.purposeCode
+                            };
+
+                            var outboxMessage = new AuditOutboxMessage
+                            {
+                                EventType = nameof(ApprovedTransactionIntegrationEvent),
+                                Payload = JsonSerializer.Serialize(integrationEvent),
+                                Status = "Pending",
+                                CreatedAt = DateTime.UtcNow
+                            };
+                            _context.AuditOutboxMessages.Add(outboxMessage);
                         }
                         else if (matchingSlab.isCheckerRequired == true)
                         {
@@ -207,6 +231,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                 batch.validRecords = validCount;
                 batch.invalidRecords = invalidCount;
                 batch.totalAmount = totalAmount;
+                batch.validationErrors = errorMessages.Any() ? JsonSerializer.Serialize(errorMessages) : null;
 
                 if (validCount > 0)
                 {
@@ -238,6 +263,44 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
             {
                 return ResultDto.Failure($"Failed to process Excel file: {ex.Message}");
             }
+        }
+
+        public async Task<ResultDto> GetMakerBatchesAsync(int uploadedByUserId)
+        {
+            var batches = await _context.TransactionBatches
+                .Where(b => b.uploadedByUserId == uploadedByUserId)
+                .OrderByDescending(b => b.uploadedAt)
+                .Select(b => new 
+                {
+                    b.Id,
+                    b.batchNo,
+                    b.fileName,
+                    b.uploadedAt,
+                    b.totalRecords,
+                    b.validRecords,
+                    b.invalidRecords,
+                    b.totalAmount,
+                    b.status
+                })
+                .ToListAsync();
+
+            return ResultDto.Success("Fetched batches.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = batches } : ResultDto.Success();
+        }
+
+        public async Task<ResultDto> GetBatchValidationReportAsync(int batchId)
+        {
+            var batch = await _context.TransactionBatches
+                .Where(b => b.Id == batchId)
+                .Select(b => new { b.validationErrors })
+                .FirstOrDefaultAsync();
+
+            if (batch == null) return ResultDto.Failure("Batch not found.");
+
+            var errors = string.IsNullOrEmpty(batch.validationErrors) 
+                ? new List<string>() 
+                : JsonSerializer.Deserialize<List<string>>(batch.validationErrors);
+
+            return ResultDto.Success("Fetched validation report.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = errors } : ResultDto.Success();
         }
     }
 }

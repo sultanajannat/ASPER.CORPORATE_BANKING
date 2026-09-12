@@ -42,5 +42,22 @@ namespace ASPER.CORPORATE_BANKING.Controllers
                 return Ok(result.Data);
             }
         }
+
+        [HttpGet("transactions/batches")]
+        public async Task<IActionResult> GetMyBatches()
+        {
+            var userIdStr = User.FindFirst("UserId")?.Value;
+            if (!int.TryParse(userIdStr, out int userId)) return Unauthorized("Invalid user token.");
+
+            var result = await _fileIngestionService.GetMakerBatchesAsync(userId);
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
+        }
+
+        [HttpGet("transactions/batches/{id}/validation-report")]
+        public async Task<IActionResult> GetBatchValidationReport(int id)
+        {
+            var result = await _fileIngestionService.GetBatchValidationReportAsync(id);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
+        }
     }
 }

@@ -25,6 +25,7 @@ namespace ASPER.CORPORATE_BANKING.Domain.Entities
         public int? validRecords { get; set; }
         public int? invalidRecords { get; set; }
         public decimal? totalAmount { get; set; }
+        public string validationErrors { get; set; } // JSON string of row-level errors
 
         public string status { get; set; }   // Uploaded, Validating, ValidationFailed, InProgress, PartiallyCompleted, Completed, Rejected, Cancelled
     }

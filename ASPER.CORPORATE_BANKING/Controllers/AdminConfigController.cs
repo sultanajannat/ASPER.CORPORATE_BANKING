@@ -55,5 +55,33 @@ namespace ASPER.CORPORATE_BANKING.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("transaction-types")]
+        public async Task<IActionResult> GetTransactionTypes()
+        {
+            var result = await _adminConfigService.GetTransactionTypesAsync();
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
+        }
+
+        [HttpGet("transaction-types/{id}/file-template")]
+        public async Task<IActionResult> GetActiveFileTemplate(int id)
+        {
+            var result = await _adminConfigService.GetActiveFileTemplateAsync(id);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
+        }
+
+        [HttpGet("transaction-types/{id}/approval-matrix")]
+        public async Task<IActionResult> GetActiveApprovalMatrix(int id)
+        {
+            var result = await _adminConfigService.GetActiveApprovalMatrixAsync(id);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Message);
+        }
+
+        [HttpGet("transaction-types/{id}/approval-matrix/history")]
+        public async Task<IActionResult> GetApprovalMatrixHistory(int id)
+        {
+            var result = await _adminConfigService.GetApprovalMatrixHistoryAsync(id);
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
+        }
     }
 }
