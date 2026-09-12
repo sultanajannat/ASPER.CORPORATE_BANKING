@@ -5,7 +5,7 @@ namespace ASPER.CORPORATE_BANKING.Domain.Entities
 {
     // Never edit an active row in place - publish a new version and deactivate the old one.
     [Table("ApprovalMatrixConfig")]
-    public class ApprovalMatrixConfig : BaseEntity
+    public class ApprovalMatrixConfig : BaseEntity, IAuditableEntity
     {
         public int? transactionTypeId { get; set; }
         public TransactionType transactionType { get; set; }

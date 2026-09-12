@@ -16,6 +16,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Data
         public DbSet<TransactionBatch> TransactionBatches { get; set; }
         public DbSet<TransactionRecord> TransactionRecords { get; set; }
         public DbSet<TransactionApprovalAction> TransactionApprovalActions { get; set; }
+        public DbSet<ASPER.CORPORATE_BANKING.Infrastructure.Audit.Outbox.AuditOutboxMessage> AuditOutboxMessages { get; set; }
 
         public CORPORATE_BANKINGDbContext(DbContextOptions<CORPORATE_BANKINGDbContext> options) : base(options)
         {

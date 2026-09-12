@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ASPER.CORPORATE_BANKING.Domain.Entities
 {
     [Table("FileTemplateConfig")]
-    public class FileTemplateConfig : BaseEntity
+    public class FileTemplateConfig : BaseEntity, IAuditableEntity
     {
         public int? transactionTypeId { get; set; }
         public TransactionType transactionType { get; set; }

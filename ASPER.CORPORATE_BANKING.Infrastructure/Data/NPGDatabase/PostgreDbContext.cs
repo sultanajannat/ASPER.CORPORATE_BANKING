@@ -16,6 +16,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Data.NPGDatabase
         public DbSet<TransactionBatch> TransactionBatches { get; set; }
         public DbSet<TransactionRecord> TransactionRecords { get; set; }
         public DbSet<TransactionApprovalAction> TransactionApprovalActions { get; set; }
+        public DbSet<ASPER.CORPORATE_BANKING.Infrastructure.Audit.Outbox.AuditOutboxMessage> AuditOutboxMessages { get; set; }
 
         public PostgreDbContext(DbContextOptions<PostgreDbContext> options) : base(options)
         {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ASPER.CORPORATE_BANKING.Domain.Entities
 {
     [Table("FileFieldMapping")]
-    public class FileFieldMapping : BaseEntity
+    public class FileFieldMapping : BaseEntity, IAuditableEntity
     {
         public int? fileTemplateConfigId { get; set; }
         public FileTemplateConfig fileTemplateConfig { get; set; }

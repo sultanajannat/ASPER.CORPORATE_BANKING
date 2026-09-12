@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ASPER.CORPORATE_BANKING.Domain.Entities
 {
     [Table("ApprovalStep")]
-    public class ApprovalStep : BaseEntity
+    public class ApprovalStep : BaseEntity, IAuditableEntity
     {
         public int? approvalMatrixSlabId { get; set; }
         public ApprovalMatrixSlab approvalMatrixSlab { get; set; }
