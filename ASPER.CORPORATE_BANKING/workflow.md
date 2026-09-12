@@ -615,3 +615,64 @@ Recommend a well-known Excel library (EPPlus, ClosedXML, or NPOI depending on yo
 
 
 *This design keeps the matrix itself as pure data (Slab→Step→StepRole), so every rule change you listed — including ones not yet imagined — is a config edit, not a deployment.*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Corporate Banking API Directory
+Here is the complete catalog of all REST API endpoints built into the Corporate Banking microservice, grouped by the role that consumes them. All endpoints require a valid JWT Bearer Token ([Authorize]).
+
+1. Admin Configurations (/api/admin-config)
+These endpoints are used by system administrators to define the rules of the system before any files can be uploaded.
+
+Method	Endpoint	Purpose
+POST	/api/admin-config/transaction-types	Creates a new root Transaction Type (e.g., "BEFTN", "RTGS", "Payroll").
+POST	/api/admin-config/transaction-types/{id}/file-template	Binds an Excel/CSV column mapping template to a specific transaction type so the Maker engine knows how to parse uploaded files.
+POST	/api/admin-config/transaction-types/{id}/approval-matrix	Submits the complex multi-level Approval Matrix (Slabs, Steps, and StepRoles). The engine validates overlapping slabs and handles automatic versioning.
+2. Maker Operations (/api/maker)
+These endpoints are used by Corporate Makers (data entry users) to upload transaction files.
+
+Method	Endpoint	Purpose
+POST	/api/maker/transactions/batches/upload	Accepts an IFormFile (e.g., .xlsx). The engine dynamically parses the file against the Admin's template, performs mandatory/regex/duplicate validation, resolves the amount against the Approval Matrix, and saves valid rows into the database safely wrapped in a transaction.
+3. Checker Operations (/api/checker)
+These endpoints are used by Checkers (first-level verifiers).
+
+Method	Endpoint	Purpose
+GET	/api/checker/transactions/pending	Fetches a list of all transactions whose status is strictly PendingCheck.
+POST	/api/checker/transactions/{id}/action	Submits a WorkflowActionRequest (Approved = true/false, Remarks). If true, it pushes the status to PendingApproval. If false, it pushes to Rejected. Natively catches DbUpdateConcurrencyException to block double-checks.
+4. Approver Operations (/api/approver)
+These endpoints are used by Approvers (multi-level finalizers).
+
+Method	Endpoint	Purpose
+GET	/api/approver/transactions/pending	Fetches a list of all transactions whose status is strictly PendingApproval.
+POST	/api/approver/transactions/{id}/action	Submits an Approve/Reject action. The engine calculates the current stepOrder. If the final step is reached, the status becomes Approved and it atomically inserts a payload into the AuditOutboxMessage table for downstream processing.
+5. Admin Monitoring Dashboard (/api/admin/monitoring)
+These endpoints give administrators live visibility into the health and blockages of the system.
+
+Method	Endpoint	Purpose
+GET	/api/admin/monitoring/pending-transactions	Returns all stuck transactions (PendingCheck or PendingApproval). It dynamically calculates the SLA AgingInMinutes and looks up the exact RoleName holding up the process.
+GET	/api/admin/monitoring/transactions/{id}/audit-trail	Returns the absolute, immutable chronological history of every Check/Approve/Reject action taken against a specific transaction.
