@@ -13,5 +13,6 @@ namespace ASPER.CORPORATE_BANKING.Application.Interfaces
         Task<ResultDto> GetActiveFileTemplateAsync(int transactionTypeId);
         Task<ResultDto> GetActiveApprovalMatrixAsync(int transactionTypeId);
         Task<ResultDto> GetApprovalMatrixHistoryAsync(int transactionTypeId);
+        Task<ResultDto> ToggleTransactionTypeStatusAsync(int id);
     }
 }

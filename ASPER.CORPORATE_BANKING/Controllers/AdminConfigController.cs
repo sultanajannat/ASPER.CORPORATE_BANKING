@@ -83,5 +83,12 @@ namespace ASPER.CORPORATE_BANKING.Controllers
             var result = await _adminConfigService.GetApprovalMatrixHistoryAsync(id);
             return result.IsSuccess ? Ok(result.Data) : BadRequest(result.Message);
         }
+
+        [HttpPatch("transaction-types/{id}/toggle-status")]
+        public async Task<IActionResult> ToggleTransactionTypeStatus(int id)
+        {
+            var result = await _adminConfigService.ToggleTransactionTypeStatusAsync(id);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.Message);
+        }
     }
 }

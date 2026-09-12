@@ -280,5 +280,17 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
 
             return ResultDto.Success("Fetched matrix history.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = history } : ResultDto.Success();
         }
+
+        public async Task<ResultDto> ToggleTransactionTypeStatusAsync(int id)
+        {
+            var txType = await _context.TransactionTypes.FindAsync(id);
+            if (txType == null) return ResultDto.Failure("Transaction type not found.");
+
+            txType.isActive = !(txType.isActive ?? false);
+            txType.updatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return ResultDto.Success($"Transaction type status changed to {(txType.isActive == true ? "Active" : "Inactive")}.");
+        }
     }
 }
