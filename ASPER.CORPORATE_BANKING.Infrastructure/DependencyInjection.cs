@@ -22,7 +22,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure
                         x => x.MigrationsHistoryTable("__EFMigrationsHistory", "corporate_banking"));
                 });
                 
-                // services.AddScoped<DbContext>(provider => provider.GetRequiredService<PostgreDbContext>());
+                services.AddScoped<CORPORATE_BANKINGDbContext>(provider => provider.GetRequiredService<PostgreDbContext>());
             }
             else
             {
@@ -32,7 +32,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure
                         x => x.MigrationsHistoryTable("__EFMigrationsHistory", "corporate_banking"));
                 });
 
-                // services.AddScoped<DbContext>(provider => provider.GetRequiredService<SQLDbContext>());
+                services.AddScoped<CORPORATE_BANKINGDbContext>(provider => provider.GetRequiredService<SQLDbContext>());
             }
 
             return services;
