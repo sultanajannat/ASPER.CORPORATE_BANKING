@@ -43,7 +43,7 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Data.NPGDatabase
 
             IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../ASPER.CORPORATE_BANKING"))
-            .AddJsonFile($"appsettings.{clientProfile}.json")
+            .AddJsonFile($"appsettings.ASPER.json")
             .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<PostgreDbContext>();

@@ -6,9 +6,9 @@ dotnet ef database update -p ASPER.CORPORATE_BANKING.Infrastructure/ASPER.CORPOR
 
 ASPER.CORPORATE_BANKING
 # POSTGRESQL Migrations
-$env:CLIENT="PBF"; dotnet ef migrations add pendingChannel --context PostgreDbContext --output-dir Migrations/PostgreSQL --project ./ASPER.CORPORATE_BANKING.Infrastructure/ASPER.CORPORATE_BANKING.Infrastructure.csproj
+$env:CLIENT="ASPER"; dotnet ef migrations add initialData --context PostgreDbContext --output-dir Migrations/PostgreSQL --project ./ASPER.CORPORATE_BANKING.Infrastructure/ASPER.CORPORATE_BANKING.Infrastructure.csproj
 
-$env:CLIENT="PBF"; dotnet ef database update --context PostgreDbContext --project ./ASPER.CORPORATE_BANKING.Infrastructure/ASPER.CORPORATE_BANKING.Infrastructure.csproj
+$env:CLIENT="ASPER"; dotnet ef database update --context PostgreDbContext --project ./ASPER.CORPORATE_BANKING.Infrastructure/ASPER.CORPORATE_BANKING.Infrastructure.csproj
 
 $env:CLIENT="PBF"; dotnet ef migrations remove --context PostgreDbContext --project ./ASPER.CORPORATE_BANKING.Infrastructure/ASPER.CORPORATE_BANKING.Infrastructure.csproj
 
