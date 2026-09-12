@@ -1,0 +1,86 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Layer Dependencies -->
+    <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Application\ASPER.CORPORATE_BANKING.Application.csproj" />
+    <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Contract\ASPER.CORPORATE_BANKING.Contract.csproj" />
+    <ProjectReference Include="..\ASPER.CORPORATE_BANKING.Infrastructure\ASPER.CORPORATE_BANKING.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Core Packages -->
+    <PackageReference Include="ASPER.AuthAPI.Contracts" Version="2.0.0" />
+    <PackageReference Include="ASPER.AuthAPI.Grpc.Client" Version="1.1.12" />
+    <PackageReference Include="ASPER.BANK_PRIME.Contract" Version="1.0.1" />
+    <PackageReference Include="ASPER.CBSCore.Contract" Version="1.0.2" />
+    <PackageReference Include="ASPER.CBSCore.Grpc.Client" Version="1.1.5" />
+    <PackageReference Include="ASPER.Channel_portal.Contract" Version="1.0.0" />
+    <PackageReference Include="ASPER.CIF.Contracts" Version="1.0.1" />
+    <PackageReference Include="ASPER.Config.Contract" Version="1.0.2" />
+    <PackageReference Include="ASPER.Config.Grpc.Client" Version="1.2.7" />
+    <PackageReference Include="ASPER.DEPOSIT.Grpc.Client" Version="1.0.7" />
+    <PackageReference Include="ASPER.CORPORATE_BANKING.Contract" Version="1.0.1" />
+    <PackageReference Include="ASPER.GLProcess.Grpc.Client" Version="2.0.2" />
+    <PackageReference Include="ASPER.Notification.Contracts" Version="1.1.2" />
+    <PackageReference Include="ASPER.PUBLIC.Contract" Version="1.0.2" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
+    <PackageReference Include="Haukcode.DinkToPdf" Version="1.1.2" />
+    <PackageReference Include="MassTransit" Version="8.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+
+    <!-- EF Core -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql" Version="8.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+
+    <!-- PDF / Excel -->
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
+    <PackageReference Include="EPPlus" Version="8.2.1" />
+    <PackageReference Include="NReco.PdfGenerator.LT" Version="1.2.1" />
+    <PackageReference Include="Quartz.AspNetCore" Version="3.18.1" />
+    <PackageReference Include="Quartz.Serialization.Json" Version="3.18.1" />
+    <PackageReference Include="SautinSoft.PdfFocus" Version="2024.11.11" />
+    <PackageReference Include="Select.Pdf" Version="25.2.0" />
+
+    <!-- Grpc / Protobuf -->
+    <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.76.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.76.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.76.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <!-- Other Utilities -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenAI" Version="2.3.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="System.Data.OleDb" Version="9.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+
+    <!-- Swagger -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- gRPC Protos -->
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>
+
+

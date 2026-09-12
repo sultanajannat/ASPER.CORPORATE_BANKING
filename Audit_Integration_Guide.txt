@@ -1,0 +1,65 @@
+# ASPER Audit Integration Guide
+
+This module provides a reusable, isolated, and automatic audit trail integration for ASPER microservices.
+
+## How it Works
+
+1.  **Automatic Capture:** Uses an EF Core `SaveChangesInterceptor` (`AuditInterceptor`) to detect changes in any entity implementing the `IAuditableEntity` marker interface.
+2.  **Outbox Pattern:** Audit events are saved to the `audit_outbox_messages` table within the same transaction as your business data. This ensures reliability.
+3.  **Background Publishing:** A background worker (`AuditPublisherWorker`) polls the outbox table and publishes events to RabbitMQ via MassTransit.
+4.  **Correlation ID:** Automatically reads `X-Correlation-Id` from the HTTP request headers and attaches it to every audit event.
+
+## Folder Structure
+
+All audit-related code is located in `Infrastructure/Audit/`:
+- `Contracts/`: Data contracts and marker interfaces.
+- `Context/`: Logic to extract user and request metadata (JWT, IP, etc.).
+- `Interceptors/`: The EF Core interceptor for automatic capture.
+- `Outbox/`: Entity and configuration for the outbox table.
+- `Publishers/`: RabbitMQ publishing logic.
+- `Services/`: Background worker and event builder.
+- `Extensions/`: DI registration methods.
+
+## How to Copy to Another Microservice
+
+1.  **Copy Folder:** Copy the entire `ASPER.DPS.Infrastructure/Audit` folder to the new microservice's Infrastructure project.
+2.  **Marker Interface:** Copy `ASPER.DPS.Domain/Entities/IAuditableEntity.cs` to the new microservice's Domain project.
+3.  **Update Configuration:**
+    Add the following to `appsettings.json`:
+    ```json
+    "AuditOptions": {
+      "ServiceName": "ASPER.CBS", 
+      "ExchangeName": "asper.audit.exchange",
+      "RoutingKey": "audit.cbs.event"
+    }
+    ```
+4.  **Register in Program.cs:**
+    ```csharp
+    builder.Services.AddAuditInfrastructure(builder.Configuration);
+    ```
+5.  **Inject Interceptor:**
+    In your `DependencyInjection.cs` (or wherever you register `AddDbContext`), add the interceptor:
+    ```csharp
+    services.AddDbContext<YourDbContext>((sp, options) => {
+        options.UseNpgsql(...);
+        options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
+    });
+    ```
+6.  **Apply Outbox Configuration:**
+    In your `DbContext.OnModelCreating`:
+    ```csharp
+    modelBuilder.ApplyAuditModelConfiguration();
+    ```
+
+## Database Migration
+
+To create the audit outbox table, run:
+```bash
+dotnet ef migrations add AddAuditInfrastructure --project YourProject.Infrastructure --startup-project YourProject.API
+dotnet ef database update
+```
+
+## Performance & Reliability
+- **Non-blocking:** Audit capture is fast (local DB save). RabbitMQ publishing is async and backgrounded.
+- **Transactional:** Audit logs are only saved if the business operation succeeds.
+- **Retry Logic:** Failed publications are retried automatically up to 3 times.

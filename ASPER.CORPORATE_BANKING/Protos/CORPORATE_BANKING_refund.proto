@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+option csharp_namespace = "ASPER.DPS.Protos";
+package dps_refund;
+
+service DpsRefundProtoService {
+  rpc RefundDPS (RefundDPSRequest) returns (RefundDPSResponse);
+}
+
+message RefundDPSRequest {
+  string original_transaction_id = 1;
+  string refund_transaction_id = 2;
+  string reason = 3;
+}
+
+message RefundDPSResponse {
+  bool success = 1;
+  string message = 2;
+}

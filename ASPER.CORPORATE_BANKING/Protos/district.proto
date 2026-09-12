@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option csharp_namespace = "Masterdata";
+
+package masterdata;
+
+import "google/protobuf/empty.proto";
+
+// The District gRPC service
+service DistrictService {
+  rpc GetDistrictList (google.protobuf.Empty) returns (DistrictListResponse);
+}
+
+// District message
+message District {
+  int32 id = 1;
+  string district_code = 2;
+  string district_name = 3;
+  string district_name_bn = 4;
+  string short_name = 5;
+  int32 divisions_id = 6;
+}
+
+// Response message for district list
+message DistrictListResponse {
+  repeated District districts = 1;
+  bool success = 2;
+  string message = 3;
+}

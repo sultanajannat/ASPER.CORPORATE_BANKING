@@ -1,0 +1,25 @@
+﻿dotnet ef migrations add accountBalance -p ASPER.DPS.Infrastructure/ASPER.DPS.Infrastructure.csproj -s ASPER.DPS/ASPER.DPS.csproj
+
+dotnet ef database update -p ASPER.DPS.Infrastructure/ASPER.DPS.Infrastructure.csproj -s ASPER.DPS/ASPER.DPS.csproj
+
+
+
+
+# POSTGRESQL Migrations
+$env:CLIENT="PBF"; dotnet ef migrations add pendingChannel --context PostgreDbContext --output-dir Migrations/PostgreSQL --project ./ASPER.DPS.Infrastructure/ASPER.DPS.Infrastructure.csproj
+
+$env:CLIENT="PBF"; dotnet ef database update --context PostgreDbContext --project ./ASPER.DPS.Infrastructure/ASPER.DPS.Infrastructure.csproj
+
+$env:CLIENT="PBF"; dotnet ef migrations remove --context PostgreDbContext --project ./ASPER.DPS.Infrastructure/ASPER.DPS.Infrastructure.csproj
+
+# SQL Server Migrations
+
+
+
+dotnet ef database update --context SQLDbContext --project ./ASPER.DPS.Infrastructure/ASPER.DPS.Infrastructure.csproj
+
+dotnet ef migrations add accountBalance  --context SQLDbContext --output-dir Migrations/SQLServer --project ./ASPER.DPS.Infrastructure/ASPER.DPS.Infrastructure.csproj
+
+
+
+

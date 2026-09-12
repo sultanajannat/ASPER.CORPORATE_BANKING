@@ -1,0 +1,213 @@
+syntax = "proto3";
+
+option csharp_namespace = "ASPER.DPS.Protos";
+
+package dpsservice;
+
+service DpsProtoService {
+  rpc CreateDPS (CreateDPSRequest) returns (CreateDPSResponse);
+  rpc CreateDPSAutoPayment (CreateDPSAutoPaymentRequest) returns (CreateDPSResponse);
+  rpc GetDPSSchedule (GetDPSScheduleRequest) returns (GetDPSScheduleResponse);
+  rpc ProcessPayment (ProcessPaymentRequest) returns (ProcessPaymentResponse);
+  rpc GetAccruedInterest (AccruedInterestRequest) returns (AccruedInterestResponse);
+   rpc UpdateNominee (UpdateNomineeRequestProto) returns (UpdateNomineeResponse);
+  rpc GetCancelSummary (CancelSummaryRequest) returns (CancelSummaryResponse);
+  rpc GetMaturityDetails (MaturityDetailsRequest) returns (MaturityDetailsResponse);
+}
+
+// Request message
+message AccruedInterestRequest {
+  string account_no = 1;
+}
+
+// Response message
+message AccruedInterestResponse {
+  bool success = 1;
+  string message = 2;
+  double accrued_interest = 3;
+}
+
+// Request message
+message CreateDPSAutoPaymentRequest {
+  CreateDPSRequest create_request = 1;
+  string transaction_no = 2;
+  string card_number = 3;
+  string card_type = 4;
+  double amount = 5;
+}
+
+// Request message
+message GetDPSScheduleRequest {
+  string account_code = 1;
+}
+
+// Response message
+message GetDPSScheduleResponse {
+  bool success = 1;
+  string message = 2;
+  string data = 3; // JSON serialized schedule data
+}
+
+// Request message
+message CreateDPSRequest {
+  string transaction_id = 1;
+  DPSCustomerProto customer = 2;
+  DPSAccountProto account = 3;
+  repeated DPSNomineeProto nominees = 4;
+  string channel_name = 5;
+}
+
+// Response message
+message CreateDPSResponse {
+  bool success = 1;
+  string message = 2;
+  string data = 3;
+}
+
+// Customer message
+message DPSCustomerProto {
+  string nid_no = 1;
+  string father_name = 2;
+  string mother_name = 3;
+  string date_of_birth = 4; // ISO 8601 date string
+  string gender = 5;
+  string mobile_no = 6;
+  string email = 7;
+  double dps_amount = 8;
+  string profession = 9;
+}
+
+// Account message
+message DPSAccountProto {
+  string product_code = 1;
+  string account_title = 2;
+  string account_title_bn = 3;
+  string ac_holder_photo = 4;
+  double dps_amount = 5;
+  string reason = 6;
+  string etin_no = 7;
+  string etin_file = 8;
+  string tax_return_file = 9;
+  string tax_return_ref_no = 10;
+  string tenure = 11;
+}
+
+// Nominee message
+message DPSNomineeProto {
+  string nominee_name = 1;
+  string nominee_father = 2;
+  string nominee_mother = 3;
+  string nominee_spouse = 4;
+  string nominee_permanent_address = 5;
+  string nominee_present_address = 6;
+  string nominee_dob = 7; // ISO 8601 date string
+  string nominee_etin = 8;
+  string nominee_passport = 9;
+  string nominee_birth_identity = 10;
+  string nominee_drive_linc = 11;
+  string relation = 12;
+  double nominee_share = 13;
+  string photo = 14;
+  string nominee_nid = 15;
+  bool is_minor = 16;
+}
+
+message ProcessPaymentRequest {
+  // Business Data
+  int32 product_id = 1;
+  string product_name = 2;
+  int32 product_ledger_id = 3;
+  int32 customer_id = 4;
+  int32 customer_account_id = 5;
+  string target_account_no = 6;
+  string target_account_name = 7;
+  string source_account_no = 8;
+  double amount = 9;
+  string transaction_id = 10;
+  string created_by = 11;
+  string transaction_type = 12;
+  string customer_code = 13;
+  string product_category_name = 14;
+  string product_ledger_code = 15;
+  string channel_name = 16;
+}
+
+message ProcessPaymentResponse {
+  bool success = 1;
+  string message = 2;
+  string voucher_no = 3;
+  string transaction_id = 4;
+}
+
+message UpdateNomineeRequestProto {
+  string account_no = 1;
+  repeated DPSNomineeProto nominees = 2;
+}
+
+// NEW: Response message for updating nominees
+message UpdateNomineeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CancelSummaryRequest {
+  string account_no = 1;
+}
+
+message CancelSummaryResponse {
+  bool success = 1;
+  string message = 2;
+  double receivable_amount = 3;
+  double total_interest_earning = 4;
+  double maturity_amount = 5;
+  double loss_of_interest_earning = 6;
+  double deposit_amount = 7;
+  double interest_amount = 8;
+  double tax_amount = 9;
+  double interest_rate = 10;
+  double excise_duty = 11;
+  double tax_rate = 12;
+  string maturity_date = 13;
+  int32 paid_months = 14;
+  int32 total_months = 15;
+}
+message MaturityDetailsRequest {
+  string product_code = 1;
+  int32 tenure = 2;
+  string term = 3;
+  double amount = 4;
+  string cycle_start_date = 5; // e.g., 2026-08-31
+}
+
+message MaturityDetailsResponse {
+  bool success = 1;
+  string message = 2;
+  MaturityDetailsData data = 3;
+}
+
+message MaturityDetailsData {
+  string interest_rate = 1;
+  string account_type = 2;
+  string product_type = 3;
+  string maturity_date = 4;
+  string total_interest_earning = 5;
+  string total_deposit_amount = 6;
+  string total_matured_amount = 7;
+  string next_installment_due_date = 8;
+  string auto_deduction_time = 9;
+  repeated InstallmentPlanItem installment_plan = 10;
+  repeated DisbursementItem disbursement_list = 11;
+}
+
+message InstallmentPlanItem {
+  string transaction_amount = 1;
+  string installment_pay_date = 2;
+  string fi_installment_plan_number = 3;
+}
+
+message DisbursementItem {
+  string transaction_type = 1;
+  string disbursement_pay_amount = 2;
+  string fi_disburse_plan_number = 3;
+  string disbursement_pay_date = 4;
+}

@@ -1,0 +1,60 @@
+POST:
+https://pblcon-uat-lb.primebank.com.bd:8443/api/v1/user/login
+
+Body:
+{
+    "username": "testuk",
+    "password": "ABCDwxyz@123456"
+}
+
+
+Response:
+{
+  "data": {
+    "accessToken": "c27c615748f8953835318ede0a9a26a5ad6030f0e0009920"
+  },
+  "responseCode": 200,
+  "messages": [
+    "Operation Successful"
+  ]
+}
+
+
+
+
+
+POST:
+https://pblcon-uat-lb.primebank.com.bd:8443/cbs-service/api/v1/processFundTransfer
+
+
+Body:
+{
+    "requestId": "1042020121523123133",
+    "requesterId": "A2001BAR010001-157",
+    "channel": "MIB",
+    "transactionType": "ACIB",
+    "debitAccount": "10421040011111",
+    "debitCurrency": "BDT",
+    "creditCurrency": "BDT",
+    "creditAccount": "2125219011111",
+    "amount": 125,
+    "debitNarration": "MET123456789",
+    "creditNarration": "MET123456789",
+    "ftCompanyId": "BD0010001"
+}
+
+
+Response:
+
+{
+  "data": {
+    "requestId": "MIB2026051100000001",
+    "responseId": "9480903500",
+    "channel": "1",
+    "timestamp": 1608181546551
+  },
+  "responseCode": 200,
+  "messages": [
+    "Successful"
+  ]
+}

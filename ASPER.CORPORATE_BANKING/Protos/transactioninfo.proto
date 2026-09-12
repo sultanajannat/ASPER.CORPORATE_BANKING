@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option csharp_namespace = "ASPER.DPS.Protos";
+
+package transactioninfoservice;
+
+service TransactionInfoService {
+  rpc CreateTransaction (CreateTransactionRequest) returns (TransactionResponse);
+  rpc GetTransactionsByAccountNo (GetTransactionsByAccountNoRequest) returns (TransactionListResponse);
+}
+
+message CreateTransactionRequest {
+  string transaction_id = 1;
+  string account_no = 2;
+  double amount = 3;
+  string transaction_date = 4;
+  string transaction_type = 5;
+  string description = 6;
+}
+
+message GetTransactionsByAccountNoRequest {
+  string account_no = 1;
+}
+
+message Transaction {
+  string transaction_id = 1;
+  string account_no = 2;
+  double amount = 3;
+  string transaction_date = 4;
+  string transaction_type = 5;
+  string description = 6;
+}
+
+message TransactionResponse {
+  string transaction_id = 1;
+  string account_no = 2;
+  double amount = 3;
+  string transaction_date = 4;
+  string transaction_type = 5;
+  string description = 6;
+  bool success = 7;
+  string message = 8;
+}
+
+message TransactionListResponse {
+  repeated Transaction transactions = 1;
+  bool success = 2;
+  string message = 3;
+}

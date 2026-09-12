@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option csharp_namespace = "Masterdata";
+
+package masterdata;
+
+import "google/protobuf/empty.proto";
+
+// The Division gRPC service
+service DivisionService {
+  rpc GetDivisionList (google.protobuf.Empty) returns (DivisionListResponse);
+}
+
+// Division message
+message Division {
+  int32 id = 1;
+  string division_code = 2;
+  string division_name = 3;
+  string division_name_bn = 4;
+  string short_name = 5;
+  int32 countrys_id = 6;
+}
+
+// Response message for division list
+message DivisionListResponse {
+  repeated Division divisions = 1;
+  bool success = 2;
+  string message = 3;
+}

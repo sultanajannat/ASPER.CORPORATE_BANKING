@@ -1,0 +1,453 @@
+You are a Senior .NET 8 Microservice Architect.
+
+I already have a working microservice named ASPER.DPS built with:
+
+* ASP.NET Core 8 Web API
+* Entity Framework Core
+* PostgreSQL
+* RabbitMQ
+* Repository Pattern
+* Clean Architecture
+
+I also have a separate centralized audit service named ASPER.AuditTrail which is already completed.
+
+Your task is to integrate ASPER.DPS with ASPER.AuditTrail using a reusable architecture so that the entire audit module can later be copied into ASPER.CBS, ASPER.GL, ASPER.NanoLoan, ASPER.Config, and future microservices with minimal code changes.
+
+IMPORTANT:
+Do NOT modify existing DPS business logic.
+Do NOT modify existing repositories.
+Do NOT modify existing services.
+Do NOT modify existing controllers unless absolutely required.
+
+The audit integration must be isolated and reusable.
+
+---
+
+# Primary Goal
+
+Whenever any auditable entity is:
+
+* Created
+* Updated
+* Deleted
+* Approved
+* Rejected
+* Activated
+* Closed
+* Encashed
+* Matured
+
+An Audit Event must automatically be generated and sent to ASPER.AuditTrail through RabbitMQ.
+
+---
+
+# Reusability Requirement (Very Important)
+
+Create a completely isolated folder/module named:
+
+```text
+Infrastructure/Audit
+```
+
+Everything related to audit must stay inside this folder.
+
+Example:
+
+```text
+Infrastructure
+ ├── Audit
+ │    ├── Contracts
+ │    ├── Context
+ │    ├── Interceptors
+ │    ├── Outbox
+ │    ├── RabbitMQ
+ │    ├── Publishers
+ │    ├── Services
+ │    ├── Extensions
+ │    ├── Configurations
+ │    └── Models
+```
+
+The goal is:
+
+Later I should be able to copy this entire Audit folder into another microservice and only change:
+
+```csharp
+ServiceName = "ASPER.CBS"
+```
+
+or
+
+```csharp
+ServiceName = "ASPER.GL"
+```
+
+and everything should work.
+
+---
+
+# Create Separate Files For Everything
+
+DO NOT create large files.
+
+Create dedicated files for:
+
+```text
+AuditEvent.cs
+AuditSeverity.cs
+AuditActionType.cs
+AuditOptions.cs
+
+IAuditContext.cs
+AuditContext.cs
+
+IAuditEventBuilder.cs
+AuditEventBuilder.cs
+
+AuditInterceptor.cs
+
+AuditOutboxMessage.cs
+AuditOutboxConfiguration.cs
+
+IAuditPublisher.cs
+RabbitMqAuditPublisher.cs
+
+AuditPublisherWorker.cs
+
+AuditServiceCollectionExtensions.cs
+```
+
+Everything must be separated.
+
+---
+
+# Correlation ID
+
+The API Gateway already generates and forwards:
+
+```http
+X-Correlation-Id
+```
+
+The DPS service must:
+
+* Read CorrelationId from request header
+* Store it in AuditContext
+* Use the same CorrelationId for every audit event
+
+Never generate CorrelationId in DPS.
+
+Only read it.
+
+---
+
+# Audit Context
+
+Create:
+
+```csharp
+IAuditContext
+```
+
+Responsibilities:
+
+* CorrelationId
+* UserId
+* UserName
+* BranchCode
+* IPAddress
+* DeviceInfo
+
+Extract from:
+
+* JWT Claims
+* HttpContext
+* Headers
+
+This service must be reusable.
+
+---
+
+# Auditable Entity Strategy
+
+Create:
+
+```csharp
+IAuditableEntity
+```
+
+Only entities implementing this interface should be audited.
+
+Example:
+
+```csharp
+public class DpsAccount : IAuditableEntity
+{
+}
+```
+
+---
+
+# Automatic Audit Capture
+
+Implement:
+
+```csharp
+SaveChangesInterceptor
+```
+
+Do not modify repositories.
+
+Do not manually call audit methods.
+
+Use EF Core ChangeTracker.
+
+Automatically detect:
+
+* Added
+* Modified
+* Deleted
+
+Capture:
+
+* EntityName
+* EntityId
+* Old Values
+* New Values
+* Changed Columns
+
+---
+
+# Outbox Pattern
+
+Implement Outbox Pattern.
+
+Create:
+
+```text
+audit_outbox_messages
+```
+
+table.
+
+Fields:
+
+* Id
+* EventType
+* Payload
+* Status
+* RetryCount
+* CreatedAt
+* ProcessedAt
+
+Audit events must first be saved into Outbox.
+
+Never publish directly from SaveChangesInterceptor.
+
+---
+
+# RabbitMQ Publishing
+
+Create dedicated publisher.
+
+Exchange:
+
+```text
+asper.audit.exchange
+```
+
+Routing Key:
+
+```text
+audit.dps.event
+```
+
+The publisher must:
+
+* Read pending outbox messages
+* Publish to RabbitMQ
+* Mark processed
+* Retry on failure
+
+---
+
+# Background Worker
+
+Create:
+
+```csharp
+AuditPublisherWorker
+```
+
+Responsibilities:
+
+* Poll outbox table
+* Publish events
+* Update status
+* Log failures
+
+---
+
+# Audit Event Contract
+
+Create a reusable contract.
+
+Fields:
+
+```csharp
+EventId
+EventVersion
+
+CorrelationId
+
+ServiceName
+ModuleName
+
+EntityName
+EntityId
+
+ActionType
+Severity
+
+OldValues
+NewValues
+
+ChangedColumns
+
+PerformedBy
+PerformedAt
+
+IPAddress
+DeviceInfo
+BranchCode
+```
+
+ServiceName must be configurable.
+
+Example:
+
+```json
+{
+  "serviceName":"ASPER.DPS"
+}
+```
+
+---
+
+# Configuration
+
+Create:
+
+```json
+"AuditOptions": {
+  "ServiceName": "ASPER.DPS",
+  "ExchangeName": "asper.audit.exchange",
+  "RoutingKey": "audit.dps.event"
+}
+```
+
+Load through IOptions.
+
+---
+
+# Database Migration
+
+Create EF Core migration automatically.
+
+Generate:
+
+```text
+AddAuditInfrastructure
+```
+
+Migration must create:
+
+```text
+audit_outbox_messages
+```
+
+table.
+
+Do not modify existing DPS tables.
+
+---
+
+# Dependency Injection
+
+Create:
+
+```csharp
+AddAuditInfrastructure()
+```
+
+extension.
+
+Program.cs should only need:
+
+```csharp
+builder.Services.AddAuditInfrastructure(builder.Configuration);
+```
+
+Nothing more.
+
+---
+
+# Logging
+
+Use existing project logging.
+
+Add audit logs for:
+
+* Event Created
+* Event Published
+* Event Failed
+* Retry Attempt
+
+---
+
+# Performance
+
+Requirements:
+
+* Async everywhere
+* Bulk processing support
+* No blocking calls
+* No reflection-heavy code
+* Optimized ChangeTracker usage
+
+---
+
+# Deliverables
+
+Generate complete production-ready code.
+
+Create all files.
+
+Create all folders.
+
+Create migration.
+
+Create DbContext changes.
+
+Create interceptor registration.
+
+Create RabbitMQ publisher.
+
+Create background worker.
+
+Create configuration.
+
+Create DI registration.
+
+Everything must be isolated under:
+
+```text
+Infrastructure/Audit
+```
+
+so that the entire folder can later be copied into ASPER.CBS, ASPER.GL, ASPER.NanoLoan, ASPER.Config with minimal changes.
+
+No pseudo code.
+No TODO comments.
+No incomplete implementation.
+Use enterprise-grade .NET 8 coding standards.

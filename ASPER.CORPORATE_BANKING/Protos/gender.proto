@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option csharp_namespace = "Masterdata";
+
+package masterdata;
+
+import "google/protobuf/empty.proto";
+
+// The Gender gRPC service
+service GenderService {
+  rpc GetGenderList (google.protobuf.Empty) returns (GenderListResponse);
+}
+
+// Gender message
+message Gender {
+  int32 id = 1;
+  string name = 2;
+  string remarks = 3;
+  int32 status = 4;
+}
+
+// Response message for gender list
+message GenderListResponse {
+  repeated Gender genders = 1;
+  bool success = 2;
+  string message = 3;
+}

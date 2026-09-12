@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option csharp_namespace = "Masterdata";
+
+package masterdata;
+
+import "google/protobuf/empty.proto";
+
+// The Country gRPC service
+service CountryService {
+  rpc GetCountryList (google.protobuf.Empty) returns (CountryListResponse);
+}
+
+// Country message
+message Country {
+  int32 id = 1;
+  string country_code = 2;
+  string country_name = 3;
+  string country_name_bn = 4;
+  string short_name = 5;
+  string currency = 6;
+}
+
+// Response message for country list
+message CountryListResponse {
+  repeated Country countries = 1;
+  bool success = 2;
+  string message = 3;
+}

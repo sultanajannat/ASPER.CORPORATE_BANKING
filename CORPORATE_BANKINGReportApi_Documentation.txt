@@ -1,0 +1,288 @@
+ASPER DPS Report API Documentation
+====================================
+
+Base URL: /api/DPSReportApi
+Authentication: Bearer Token Required (via [Authorize] attribute)
+Format: JSON
+
+-------------------------------------------------------------------------------
+1. Get DPS Schedule
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/DPSSchedule
+Description: Fetches the running DPS schedule and related account information.
+
+Parameters:
+  - AccountNo (string, Required): The customer account number.
+
+Response: JSON (DPSSchedulesViewModel)
+{
+  "customerAccountInfo": { ... },
+  "dpsSchedules": [
+    {
+      "id": 0,
+      "customerAccountId": 0,
+      "scheduleNo": 0,
+      "effectiveDate": "2026-06-09T00:00:00",
+      "monthlyAmount": 0,
+      "status": "string"
+    }
+  ],
+  "accountInfosVM": {
+    "customerName": "string",
+    "customerId": "string",
+    "phone": "string",
+    "accNo": "string",
+    "acType": "string",
+    "accOpenDate": "2026-06-09T00:00:00",
+    "acStatus": "string",
+    "balance": 0,
+    "productName": "string",
+    "maturityDate": "2026-06-09T00:00:00"
+  },
+  "companyName": "string",
+  "companyaddressLine": "string",
+  "companyfilePath": "string",
+  "companydateFormat": "string",
+  "printedBy": "string",
+  "printedAt": "2026-06-09T00:00:00"
+}
+
+-------------------------------------------------------------------------------
+2. Get Customer Nominee
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/CustomerNominee
+Description: Fetches nominee information associated with a specific customer account.
+
+Parameters:
+  - accountNo (string, Required): The customer account number.
+
+Response: JSON (DPSSchedulesViewModel)
+{
+  "customerAccountInfo": { ... },
+  "nomineeInfo": [
+    {
+      "name": "string",
+      "relation": "string",
+      "sharing_rate": 0,
+      "nid": "string",
+      "present_address": "string"
+    }
+  ],
+  "dpsSchedules": [ ... ],
+  "companyName": "string",
+  "companyaddressLine": "string"
+}
+
+-------------------------------------------------------------------------------
+3. Get DPS Summary Report
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/DpsSummaryReport
+Description: Provides a summary report of DPS activities within a date range and partner channel.
+
+Parameters:
+  - fromDate (DateTime, Required): Start date (yyyy-MM-dd)
+  - toDate (DateTime, Required): End date (yyyy-MM-dd)
+  - channelId (int, Required): Partner channel ID
+
+Response: JSON (DpsSummaryReportPageVM)
+{
+  "reportData": [
+    {
+      "date": "2026-06-09T00:00:00",
+      "totalDps": 0,
+      "activeDps": 0,
+      "newDps": 0,
+      "closedDps": 0,
+      "dpsOpeningChannel": "string",
+      "dpsProductName": "string",
+      "installmentDeposited": 0,
+      "depositAmount": 0,
+      "interestAccrued": 0
+    }
+  ],
+  "fromDate": "2026-06-09T00:00:00",
+  "toDate": "2026-06-09T00:00:00",
+  "companyName": "string",
+  "companyaddressLine": "string"
+}
+
+-------------------------------------------------------------------------------
+4. Get DPS Commission Payment Report
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/DpsCommissionPaymentReport
+Description: Details commission payments for partner channels.
+
+Parameters:
+  - fromDate (DateTime, Required): Start date (yyyy-MM-dd)
+  - toDate (DateTime, Required): End date (yyyy-MM-dd)
+  - channelId (int, Optional): Partner channel ID
+  - commissionOn (string, Required): Type of commission (e.g., "Collection", "Opening")
+
+Response: JSON (DpsSummaryReportPageVM)
+{
+  "dpsCommissiondata": [
+    {
+      "date": "2026-06-09T00:00:00",
+      "dpsOpeningChannel": "string",
+      "dpsProductName": "string",
+      "commissionOn": "string",
+      "totalCount": 0,
+      "totalTransactionAmount": 0,
+      "totalCommissionAmount": 0
+    }
+  ],
+  "displayCommissionType": "string",
+  "fromDate": "2026-06-09T00:00:00",
+  "toDate": "2026-06-09T00:00:00"
+}
+
+-------------------------------------------------------------------------------
+5. Get DPS Account List Report
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/DpsAccountListReport
+Description: Lists all DPS accounts opened within a specific timeframe for a channel.
+
+Parameters:
+  - fromDate (DateTime, Required): Start date
+  - toDate (DateTime, Required): End date
+  - channelId (int, Optional): Partner channel ID
+
+Response: JSON (DpsSummaryReportPageVM)
+{
+  "dpsAccountsList": [
+    {
+      "id": 0,
+      "customerAccountNo": "string",
+      "customerName": "string",
+      "mobileNo": "string",
+      "openingDate": "2026-06-09T00:00:00",
+      "status": "string",
+      "channelName": "string",
+      "productName": "string"
+    }
+  ],
+  "displayChannelName": "string",
+  "fromDate": "2026-06-09T00:00:00",
+  "toDate": "2026-06-09T00:00:00"
+}
+
+-------------------------------------------------------------------------------
+6. Get Product List By Channel
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/ProductListByChannel
+Description: Lists DPS products associated with a specific partner channel and their performance.
+
+Parameters:
+  - fromDate (DateTime, Required): Start date
+  - toDate (DateTime, Required): End date
+  - channelId (int, Optional): Partner channel ID
+
+Response: JSON (DpsSummaryReportPageVM)
+{
+  "productList": [
+    {
+      "id": 0,
+      "name": "string",
+      "code": "string",
+      "interestRate": 0,
+      "productCategoryName": "string"
+    }
+  ],
+  "displayChannelName": "string"
+}
+
+-------------------------------------------------------------------------------
+7. Get Encashment Report By Channel
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/EncashmentReportByChannel
+Description: Provides details on DPS accounts encashed/closed within a date range.
+
+Parameters:
+  - fromDate (DateTime, Required): Start date
+  - toDate (DateTime, Required): End date
+  - channelId (int, Optional): Partner channel ID
+
+Response: JSON (DpsEncashmentReportPageVM)
+{
+  "encashmentList": [
+    {
+      "accountNo": "string",
+      "encashmentDate": "2026-06-09T00:00:00",
+      "amount": 0,
+      "channelName": "string",
+      "productName": "string"
+    }
+  ],
+  "displayChannelName": "string",
+  "fromDate": "2026-06-09T00:00:00",
+  "toDate": "2026-06-09T00:00:00"
+}
+
+-------------------------------------------------------------------------------
+8. Get DPS Account Statement
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/DPSStatement
+Description: Generates a detailed statement for a DPS account including schedules and payments.
+
+Parameters:
+  - accountNo (string, Required): Customer account number
+  - startDate (DateTime, Required): Start date
+  - endDate (DateTime, Required): End date
+
+Response: JSON (DpsSummaryReportPageVM)
+{
+  "accountInfo": {
+    "dpsId": "string",
+    "name": "string",
+    "status": "string",
+    "productName": "string",
+    "startDate": "2026-06-09T00:00:00",
+    "maturityDate": "2026-06-09T00:00:00",
+    "monthlyInstallment": 0,
+    "interestRate": 0,
+    "totalMonths": 0,
+    "tenureName": "string"
+  },
+  "rows": [
+    {
+      "scheduleDate": "2026-06-09T00:00:00",
+      "scheduleAmount": 0,
+      "paidAmount": 0,
+      "status": "string"
+    }
+  ],
+  "totalScheduled": 0,
+  "totalPrincipalCollected": 0,
+  "totalInterestEarned": 0,
+  "totalAmount": 0,
+  "totalMonthsPaid": 0,
+  "totalMonthsMissed": 0,
+  "totalMonthsRemaining": 0
+}
+
+-------------------------------------------------------------------------------
+9. Get DPS Account Breakdown
+-------------------------------------------------------------------------------
+Endpoint: GET /api/DPSReportApi/DPSAccountBreakdown
+Description: Provides a day-by-day breakdown of interest charged and payments made.
+
+Parameters:
+  - accountId (int, Required): Internal database ID of the account.
+
+Response: JSON (DPSSchedulesViewModel)
+{
+  "dpsAccountBreakdown": [
+    {
+      "effectiveDate": "2026-06-09T00:00:00",
+      "interestCharged": 0,
+      "paymentAmount": 0,
+      "scheduleAmount": 0,
+      "runningTotalInterestCharged": 0,
+      "runningTotalPaymentAmount": 0
+    }
+  ],
+  "accountInfosVM": { ... },
+  "companyName": "string"
+}
+-------------------------------------------------------------------------------
+
