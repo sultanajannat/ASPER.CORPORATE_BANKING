@@ -30,6 +30,8 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.HasDefaultSchema("crbanking");
 
             modelBuilder.Entity<TransactionRecord>()
                 .HasIndex(t => t.instructionRefNo)

@@ -222,8 +222,16 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
 
         public async Task<ResultDto> GetTransactionTypesAsync()
         {
-            var types = await _context.TransactionTypes.ToListAsync();
-            return ResultDto.Success("Fetched transaction types.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = types } : ResultDto.Success();
+            try
+            {
+                var types = await _context.TransactionTypes.ToListAsync();
+                return ResultDto.Success("Fetched transaction types.") is ResultDto res ? new ResultDto { IsSuccess = res.IsSuccess, Message = res.Message, Data = types } : ResultDto.Success();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task<ResultDto> GetActiveFileTemplateAsync(int transactionTypeId)

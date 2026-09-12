@@ -38,16 +38,20 @@ namespace ASPER.CORPORATE_BANKING.Infrastructure
             return services;
         }
 
-        public static IServiceCollection AddMassTransitWithRabbitMQ(this IServiceCollection services)
+        public static IServiceCollection AddMassTransitWithRabbitMQ(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("localhost", "/", h =>
+                    var rabbitMqHost = configuration["RabbitMqSettings:Host"] ?? "localhost";
+                    var rabbitMqUser = configuration["RabbitMqSettings:Username"] ?? "guest";
+                    var rabbitMqPass = configuration["RabbitMqSettings:Password"] ?? "guest";
+
+                    cfg.Host(rabbitMqHost, "/", h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(rabbitMqUser);
+                        h.Password(rabbitMqPass);
                     });
                 });
             });
