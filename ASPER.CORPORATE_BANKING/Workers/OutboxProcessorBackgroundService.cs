@@ -37,7 +37,14 @@ namespace ASPER.CORPORATE_BANKING.Workers
                 if (stoppingToken.IsCancellationRequested)
                     break;
 
-                await ProcessOutboxMessagesAsync(stoppingToken);
+                try
+                {
+                    await ProcessOutboxMessagesAsync(stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while polling the Outbox table. (Database might not be ready).");
+                }
             }
         }
 
