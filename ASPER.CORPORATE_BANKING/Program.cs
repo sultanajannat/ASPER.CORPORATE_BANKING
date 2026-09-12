@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using ASPER.AuthAPI.Grpc.Client.Services;
+using ASPER.AuthAPI.Protos;
 
 var builder = WebApplication.CreateBuilder(args);
 var clientName = builder.Configuration["ClientInfo:ClientName"] ?? "default";
@@ -22,6 +24,15 @@ builder.Services.AddCors(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+var authServiceUrl = builder.Configuration["GrpcSettings:AuthServiceUrl"] ?? "https://localhost:5001";
+builder.Services.AddGrpcClient<UserInfoProtoService.UserInfoProtoServiceClient>(options =>
+    options.Address = new Uri(authServiceUrl));
+builder.Services.AddScoped<IUserInfoGrpcService, UserInfoGrpcService>();
+
+// Register Corporate Banking Services
+builder.Services.AddScoped<ASPER.CORPORATE_BANKING.Application.Interfaces.IAuthIntegrationService, ASPER.CORPORATE_BANKING.Application.Services.AuthIntegrationService>();
+builder.Services.AddScoped<ASPER.CORPORATE_BANKING.Application.Interfaces.IApprovalWorkflowEngine, ASPER.CORPORATE_BANKING.Application.Services.ApprovalWorkflowEngine>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
