@@ -6,6 +6,8 @@ using ASPER.CORPORATE_BANKING.Application.Interfaces;
 using ASPER.CORPORATE_BANKING.Application.DTOs;
 using ASPER.CORPORATE_BANKING.Infrastructure.Data;
 using ASPER.CORPORATE_BANKING.Domain.Entities;
+using System.Text.Json;
+using ASPER.CORPORATE_BANKING.Infrastructure.Audit.Outbox;
 
 namespace ASPER.CORPORATE_BANKING.Application.Services
 {
@@ -178,7 +180,28 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                     else
                     {
                         record.status = "Approved";
-                        // Downstream outbox processing should be enqueued here
+                        
+                        // Transactional Outbox Pattern: Insert the event alongside the approval state commit
+                        var integrationEvent = new ApprovedTransactionIntegrationEvent
+                        {
+                            TransactionRecordId = record.Id,
+                            InstructionRefNo = record.instructionRefNo,
+                            Amount = record.amount ?? 0,
+                            Currency = record.currency,
+                            BeneficiaryAccount = record.bankAccountNo,
+                            SenderAccount = record.senderAccountNo,
+                            RoutingNumber = record.routingNumber,
+                            PurposeCode = record.purposeCode
+                        };
+
+                        var outboxMessage = new AuditOutboxMessage
+                        {
+                            EventType = nameof(ApprovedTransactionIntegrationEvent),
+                            Payload = JsonSerializer.Serialize(integrationEvent),
+                            Status = "Pending",
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        _context.AuditOutboxMessages.Add(outboxMessage);
                     }
                 }
 

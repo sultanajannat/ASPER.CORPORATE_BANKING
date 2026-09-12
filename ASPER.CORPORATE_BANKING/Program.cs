@@ -40,6 +40,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddMassTransitWithRabbitMQ();
+builder.Services.AddHostedService<ASPER.CORPORATE_BANKING.Workers.OutboxProcessorBackgroundService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
