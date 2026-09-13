@@ -696,3 +696,97 @@ My Recommendation
 We need to close the Auto-Approve Outbox Bug immediately, as it is a critical failure in the happy path.
 
 Would you like me to fix the Auto-Approve bug in the FileIngestionService right now so it correctly dispatches to the payment rails?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+my project is asper core banking sytem, it is a micro service 
+here angular is front end, and we have gateway to connect all teh service with front end
+and i have a auth service where all the user and role creats, and all the user role management part works here , 
+now i want to make a page to configure the approval matrix for transaction , which could be beftn , rtgs, npsb, or naything else , that should be configurable , 
+here we are currently working from bank side, like bulk excel file upload , and there will be format, 
+and a maker role  will upload the file , 
+here for all transaction there will be checker role , checker will just check and forward the transaction data 
+when configure the matrix there should option for config will checker check or not , if configured yes then checker will check and forward and if confgured no then checker dotn have to check it will auto go to the matrix user role
+
+now here comes the actual matrix set up 
+the matrix set up will be on the basis of transaction amount 
+like example from 0 to 5000 taka transaction will be auto , there will be no no checker or no anything else approvals , and this can be any amount , only the admin will set this 
+and from 5001 to 50000(this can be any amount , set by admin) there will be only one approver role name A(as exampel, it can be any name of role ) , if this approver approves then this trasaction will be happend , here maker role will upload the file , adn you will set that checker role  will check and forward yes or no, if yes then check and forward if no then direct go to the approvaer role A
+and when approver A approves then transaction will be happend 
+and 50001 to 100000 (it can be any amout set by admin)
+for this amount the role A and B must Approve , the rules for checker maker remains same 
+
+and from 100001 to  1000000 (it can be any amout set by admin)
+
+for this amount the role A and C must Approve , the rules for checker maker remains same 
+
+and from 1000001 to  10000000  (it can be any amout set by admin)
+
+
+for this amount either A or B or C must approver , any one approval from these role will be considered Approved 
+and 
+with that D must Approved as well , here sequense must maintain here for all the approval process ,  the rules for checker maker remains same 
+here maker role who upload the file and checker role task is to check the uploaded date and forwared
+
+and there will be a separate admin page , from this page admin will be able to see the all relevatn info and with the same time in which hand the trasaction is currently staying nad who last passed , admin will be able to see the current time datetime.utcnow, and all teh other relevatn info 
+in the file , data will be bank ac no
+bank ac holder name 
+routing number , amount and other relevant info will be present , use your intellectual for other releavtn info and tell me what else should be important for include
+consider yourself very expert in micro service and very expert in approval matrix design and very expert in trasactional flow, 
+and you can give me suggestion like how should i impletment this in my system and what else i should include, how many front end page there should be, the use and business logic of that pages , and what table i should include into teh asper,corporate_banking project 
+here how to combine the asper.auth rpoejct and asper.corporate_banking to get the best result and also we have base entity class in all proejct 
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ASPER.CORPORATE_BANKING.Domain.Entities
+{
+    public class BaseEntity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        
+        [DefaultValue(0)]
+        [Column("IS_DELETE")]
+        public int? isDelete { get; set; } = 0;
+        
+        [Column("CREATED_AT")]
+        public DateTime? createdAt { get; set; }
+        
+        [Column("UPDATED_AT")]
+        public DateTime? updatedAt { get; set; }
+        
+        [MaxLength(250)]
+        [Column("CREATED_BY")]
+        public string createdBy { get; set; }
+        
+        [MaxLength(250)]
+        [Column("UPDATED_BY")]
+        public string updatedBy { get; set; }
+    }
+}
+
+
+
+now tell me what table should i include in the corporate banking proejct , how should be the logic how should be  the desihn , make it flawless and best practice , right now i want to complete the back end fisrt then i will start the front end, now make a .md file and tell me each and every details to compelte the entire back end part , here we have implemented grpc in our system, and by this we can fecth the user and role data from the auth service , 
+
