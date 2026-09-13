@@ -86,8 +86,7 @@ namespace ASPER.CORPORATE_BANKING.Controllers
             {
                 // Fallback to "testuser" for dev if claims are empty
                 string userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "testuser";
-                // In production, we parse UserId from JWT. Fallback to 1.
-                int userId = int.TryParse(User.FindFirst("UserId")?.Value, out int uid) ? uid : 1;
+                // Int parsing removed since we use UserName directly now
 
                 // Validate Role via gRPC Auth Service
                 var roleInfo = await _authService.GetRoleInfoByUserAsync(userName);
@@ -99,11 +98,11 @@ namespace ASPER.CORPORATE_BANKING.Controllers
                 ResultDto result;
                 if (request.IsApproved)
                 {
-                    result = await _workflowEngine.Approve(id, userId, request.RoleId, request.Remarks);
+                    result = await _workflowEngine.Approve(id, userName, request.RoleName, request.Remarks);
                 }
                 else
                 {
-                    result = await _workflowEngine.Reject(id, userId, request.RoleId, request.Remarks);
+                    result = await _workflowEngine.Reject(id, userName, request.RoleName, request.Remarks);
                 }
 
                 if (!result.IsSuccess)

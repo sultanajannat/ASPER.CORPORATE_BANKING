@@ -17,7 +17,7 @@ namespace ASPER.CORPORATE_BANKING.Domain.Entities
         public bool? isCheckerRequired { get; set; } = true;
 
         // snapshot from ASPER.AUTH via gRPC - no local FK/navigation, that table lives in another service
-        public int? checkerRoleId { get; set; }
+        public string checkerRoleId { get; set; }
         public string checkerRoleName { get; set; }
 
         public bool? isActive { get; set; } = true;

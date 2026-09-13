@@ -10,7 +10,7 @@ namespace ASPER.CORPORATE_BANKING.Domain.Entities
         public ApprovalStep approvalStep { get; set; }
 
         // from ASPER.AUTH via gRPC - snapshot only, no local FK/navigation possible
-        public int? roleId { get; set; }
+        public string roleId { get; set; }
         public string roleName { get; set; }
     }
 }

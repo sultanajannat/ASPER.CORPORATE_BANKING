@@ -17,7 +17,7 @@ namespace ASPER.CORPORATE_BANKING.Domain.Entities
         public string actionByUserName { get; set; }
 
         // snapshot from ASPER.AUTH - which role they acted as (a user may hold more than one eligible role)
-        public int? actionByRoleId { get; set; }
+        public string actionByRoleId { get; set; }
         public string actionByRoleName { get; set; }
 
         public DateTime? actionAt { get; set; }  // DateTime.UtcNow

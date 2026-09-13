@@ -19,7 +19,9 @@ namespace ASPER.CORPORATE_BANKING.Application.DTOs
         public int ActionId { get; set; }
         public string ActionType { get; set; }
         public int? ActionByUserId { get; set; }
-        public int? ActionByRoleId { get; set; }
+        public string ActionByUserName { get; set; }
+        public string ActionByRoleId { get; set; }
+        public string ActionByRoleName { get; set; }
         public string Remarks { get; set; }
         public DateTime ActionAt { get; set; }
     }

@@ -265,10 +265,10 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
             }
         }
 
-        public async Task<ResultDto> GetMakerBatchesAsync(int uploadedByUserId)
+        public async Task<ResultDto> GetMakerBatchesAsync(string uploadedByUserName)
         {
             var batches = await _context.TransactionBatches
-                .Where(b => b.uploadedByUserId == uploadedByUserId)
+                .Where(b => b.uploadedByUserName == uploadedByUserName)
                 .OrderByDescending(b => b.uploadedAt)
                 .Select(b => new 
                 {

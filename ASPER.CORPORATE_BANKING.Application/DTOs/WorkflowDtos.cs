@@ -4,7 +4,8 @@ namespace ASPER.CORPORATE_BANKING.Application.DTOs
 {
     public class WorkflowActionRequest
     {
-        public int RoleId { get; set; }
+        public string RoleId { get; set; }
+        public string RoleName { get; set; }
         public bool IsApproved { get; set; }
         public string Remarks { get; set; }
     }

@@ -20,7 +20,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
             _context = context;
         }
 
-        public async Task<ResultDto> CheckAndForward(int transactionRecordId, int userId, int roleId, string remarks)
+        public async Task<ResultDto> CheckAndForward(int transactionRecordId, string userName, string roleName, string remarks)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -32,7 +32,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                 if (record == null) return ResultDto.Failure("Transaction record not found.");
                 if (record.status != "PendingCheck") return ResultDto.Failure("Transaction is not in PendingCheck state.");
 
-                if (record.matrixSlab.checkerRoleId != roleId)
+                if (record.matrixSlab.checkerRoleName != roleName)
                 {
                     return ResultDto.Failure("User role is not authorized to check this transaction.");
                 }
@@ -41,8 +41,8 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                 {
                     transactionRecordId = record.Id,
                     actionType = "Checked",
-                    actionByUserId = userId,
-                    actionByRoleId = roleId,
+                    actionByUserName = userName,
+                    actionByRoleName = roleName,
                     actionAt = DateTime.UtcNow,
                     remarks = remarks
                 };
@@ -65,7 +65,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
             }
         }
 
-        public async Task<ResultDto> CheckReject(int transactionRecordId, int userId, int roleId, string remarks)
+        public async Task<ResultDto> CheckReject(int transactionRecordId, string userName, string roleName, string remarks)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -77,7 +77,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                 if (record == null) return ResultDto.Failure("Transaction record not found.");
                 if (record.status != "PendingCheck") return ResultDto.Failure("Transaction is not in PendingCheck state.");
 
-                if (record.matrixSlab.checkerRoleId != roleId)
+                if (record.matrixSlab.checkerRoleName != roleName)
                 {
                     return ResultDto.Failure("User role is not authorized to check this transaction.");
                 }
@@ -86,8 +86,8 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                 {
                     transactionRecordId = record.Id,
                     actionType = "Rejected",
-                    actionByUserId = userId,
-                    actionByRoleId = roleId,
+                    actionByUserName = userName,
+                    actionByRoleName = roleName,
                     actionAt = DateTime.UtcNow,
                     remarks = remarks
                 };
@@ -109,7 +109,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
             }
         }
 
-        public async Task<ResultDto> Approve(int transactionRecordId, int userId, int roleId, string remarks)
+        public async Task<ResultDto> Approve(int transactionRecordId, string userName, string roleName, string remarks)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -131,7 +131,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                     .Where(sr => sr.approvalStepId == currentStep.Id)
                     .ToListAsync();
 
-                if (!stepRoles.Any(sr => sr.roleId == roleId))
+                if (!stepRoles.Any(sr => sr.roleName == roleName))
                 {
                     return ResultDto.Failure("User role is not authorized for this approval step.");
                 }
@@ -139,7 +139,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                 var existingApproval = await _context.TransactionApprovalActions
                     .AnyAsync(a => a.transactionRecordId == record.Id 
                                 && a.stepOrder == record.currentStepOrder 
-                                && a.actionByRoleId == roleId 
+                                && a.actionByRoleName == roleName 
                                 && a.actionType == "Approved");
 
                 if (existingApproval) return ResultDto.Failure("You have already approved this step.");
@@ -149,8 +149,8 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                     transactionRecordId = record.Id,
                     actionType = "Approved",
                     stepOrder = record.currentStepOrder,
-                    actionByUserId = userId,
-                    actionByRoleId = roleId,
+                    actionByUserName = userName,
+                    actionByRoleName = roleName,
                     actionAt = DateTime.UtcNow,
                     remarks = remarks
                 };
@@ -224,7 +224,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
             }
         }
 
-        public async Task<ResultDto> Reject(int transactionRecordId, int userId, int roleId, string remarks)
+        public async Task<ResultDto> Reject(int transactionRecordId, string userName, string roleName, string remarks)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -245,7 +245,7 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                     .Where(sr => sr.approvalStepId == currentStep.Id)
                     .ToListAsync();
 
-                if (!stepRoles.Any(sr => sr.roleId == roleId))
+                if (!stepRoles.Any(sr => sr.roleName == roleName))
                 {
                     return ResultDto.Failure("User role is not authorized for this approval step.");
                 }
@@ -255,8 +255,8 @@ namespace ASPER.CORPORATE_BANKING.Application.Services
                     transactionRecordId = record.Id,
                     actionType = "Rejected",
                     stepOrder = record.currentStepOrder,
-                    actionByUserId = userId,
-                    actionByRoleId = roleId,
+                    actionByUserName = userName,
+                    actionByRoleName = roleName,
                     actionAt = DateTime.UtcNow,
                     remarks = remarks
                 };

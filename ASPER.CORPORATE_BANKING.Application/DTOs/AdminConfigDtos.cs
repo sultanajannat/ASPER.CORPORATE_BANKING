@@ -38,7 +38,7 @@ namespace ASPER.CORPORATE_BANKING.Application.DTOs
         public decimal? MaxAmount { get; set; }
         public bool IsAutoApprove { get; set; }
         public bool IsCheckerRequired { get; set; }
-        public int? CheckerRoleId { get; set; }
+        public string CheckerRoleId { get; set; }
         public string CheckerRoleName { get; set; }
         public List<ApprovalStepRequest> Steps { get; set; }
     }
@@ -52,7 +52,7 @@ namespace ASPER.CORPORATE_BANKING.Application.DTOs
 
     public class ApprovalStepRoleRequest
     {
-        public int RoleId { get; set; }
+        public string RoleId { get; set; }
         public string RoleName { get; set; }
     }
 }
