@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ASPER.CORPORATE_BANKING.Application.Interfaces;
@@ -42,6 +43,7 @@ namespace ASPER.CORPORATE_BANKING.Controllers
 
             return Ok(result.Data);
         }
+
         [HttpGet("batches")]
         public async Task<IActionResult> GetAllBatches()
         {
@@ -51,6 +53,17 @@ namespace ASPER.CORPORATE_BANKING.Controllers
 
             return Ok(result.Data);
         }
+
+        [HttpGet("batches/{id}/timeline")]
+        public async Task<IActionResult> GetBatchTimeline(int id)
+        {
+            var result = await _monitoringService.GetBatchTimelineAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(result.Message);
+
+            return Ok(result.Data);
+        }
+
         [HttpGet("transactions/{id}")]
         public async Task<IActionResult> GetTransactionDetail(int id)
         {
@@ -60,6 +73,7 @@ namespace ASPER.CORPORATE_BANKING.Controllers
 
             return Ok(result.Data);
         }
+
         [HttpGet("transactions/{id}/audit-trail")]
         public async Task<IActionResult> GetAuditTrail(int id)
         {
@@ -71,6 +85,3 @@ namespace ASPER.CORPORATE_BANKING.Controllers
         }
     }
 }
-
-
-
